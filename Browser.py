@@ -1,4 +1,5 @@
 from operator import sub
+from unicodedata import category
 import openpyxl
 import traceback
 from selenium import webdriver
@@ -133,7 +134,12 @@ class Browser:
                 #print("title na")
                 title=''
                 continue
-            
+            try:
+                section=self.driver.find_element_by_id("wayfinding-breadcrumbs_feature_div").text
+                section=section.split("\n")[-1]
+            except:
+                #traceback.print_exc()
+                section=''
             try:
                 image=self.driver.find_element_by_id("landingImage").get_attribute("src")
                 #print(image)
@@ -146,16 +152,27 @@ class Browser:
                 self.driver.find_element_by_xpath("//a[@data-action='a-expander-toggle']").click()
             except:
                 pass """
-            try:                
+            try:          
+                try:
+                    self.driver.find_element_by_class_name("a-expander-header a-declarative a-expander-extend-header").click()
+                except:
+                    pass
+                desc1=desc2=desc3=''    
+                desc1=self.driver.find_element_by_id("productOverview_feature_div").text
+                desc2=self.driver.find_element_by_id("featurebullets_feature_div").text
+                time.sleep(5)
                 self.driver.execute_script("window.scrollTo(0,3000)")
-                desc=self.driver.find_element_by_xpath("#aplus").text
-                #print(desc),"#btf-content-1_feature_div","#productDescription"
+                desc3=self.driver.find_element_by_id("aplus").text
+                #print(desc3)
             except:
-                    print("desc n/a")
-                    time.sleep(10)
-                    traceback.print_exc()
-                    time.sleep(10)
-                    continue
+                try:
+                    desc3=self.driver.find_element_by_id("productDescription").text
+                except:
+                    try:
+                        desc3=self.driver.find_element_by_id("btf-content-1_feature_div").text
+                    except:
+                        print("desc n/a")
+                        continue
             #get product details
             try:
                 product=self.driver.find_element_by_id("prodDetails")
@@ -167,18 +184,25 @@ class Browser:
                 product=''
             
             #formatting
-
+            if ':' in title:
+                title=title.split(":")[0]
+            if ';' in title:
+                title=title.split(";")[0]
+            if ',' in title:
+                title=title.split(",")[0]
+            
             newrow=getmaxrow("Sheet")+1
             writetoexcel(sheet_name="Sheet",row=newrow,col=1,value=title)
             
-            desctext=self.intro.get()+"\n\n"+ desc +"\n\n"+product+"\n\n"
-            desctext+='<a href ="{}" class="dl_button"> Buy Now via Amazon </a>'.format(link[i])
+            purchase='<a href ="{}" class="dl_button"> Buy Now via Amazon </a>'.format(link[i])
+            desctext=self.intro.get()+"\n\n"+ desc1+desc2+desc3 +"\n\n<h2>Product Information</h2>\n\n"
+            desctext+=product+"\n\n"+purchase
             print(desctext)
 
             writetoexcel(sheet_name="Sheet",row=newrow,col=2,value=desctext)
-            writetoexcel(sheet_name="Sheet",row=newrow,col=3,value="category")
+            writetoexcel(sheet_name="Sheet",row=newrow,col=3,value=section)
             writetoexcel(sheet_name="Sheet",row=newrow,col=4,value=keyword)
-            writetoexcel(sheet_name="Sheet",row=newrow,col=5,value="purchase")
+            writetoexcel(sheet_name="Sheet",row=newrow,col=5,value=link[i])
             writetoexcel(sheet_name="Sheet",row=newrow,col=6,value=image)
 
             break
