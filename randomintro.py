@@ -5,8 +5,8 @@ class Intro:
             self.intros=f.read().split("\n")
     def get(self):
         return random.choice(self.intros)
-    def get_intro(self,book,author):
+    def get_intro(self,product,category):
         intro=self.get()
-        intro=intro.replace("[book_title]"," "+book+" ")
-        intro=intro.replace("[author_name]"," "+author+" ")
+        intro=intro.replace("[product_title]"," "+product+" ")
+        intro=intro.replace("[category]"," "+category+" ")
         return intro

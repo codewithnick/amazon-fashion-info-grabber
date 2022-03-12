@@ -121,7 +121,10 @@ class Browser:
             link.append(i.get_attribute("href"))
         print("links fetched ",len(link))
         #only first result
+        count=0
         for i in range(len(link)):
+            if count>=5:
+                break
             link[i]=formaturl(link[i])
             self.driver.get(link[i])
             #get title
@@ -195,7 +198,7 @@ class Browser:
             writetoexcel(sheet_name="Sheet",row=newrow,col=1,value=title)
             
             purchase='<a href ="{}" class="dl_button"> Buy Now via Amazon </a>'.format(link[i])
-            desctext=self.intro.get()+"\n\n"+ desc1+desc2+desc3 +"\n\n<h2>Product Information</h2>\n\n"
+            desctext=self.intro.get_intro(title,section)+"\n\n"+ desc1+desc2+desc3 +"\n\n<h2>Product Information</h2>\n\n"
             desctext+=product+"\n\n"+purchase
             print(desctext)
 
@@ -204,8 +207,8 @@ class Browser:
             writetoexcel(sheet_name="Sheet",row=newrow,col=4,value=keyword)
             writetoexcel(sheet_name="Sheet",row=newrow,col=5,value=link[i])
             writetoexcel(sheet_name="Sheet",row=newrow,col=6,value=image)
-
-            break
+            count+=1
+            
     def leave(self):
         print(" killing the browser ")
         self.driver.quit()
