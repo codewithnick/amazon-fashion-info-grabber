@@ -80,7 +80,7 @@ class Browser:
         self.driver=driver          
         # random intro
         self.intro=Intro()
-    def start(self,keyword,page):
+    def start(self,keyword,keywordtosave,page):
         #search page 1
         createexcelifnotexists()
         self.driver.get("https://www.amazon.com/")
@@ -204,7 +204,7 @@ class Browser:
 
             writetoexcel(sheet_name="Sheet",row=newrow,col=2,value=desctext)
             writetoexcel(sheet_name="Sheet",row=newrow,col=3,value=section)
-            writetoexcel(sheet_name="Sheet",row=newrow,col=4,value=keyword)
+            writetoexcel(sheet_name="Sheet",row=newrow,col=4,value=keywordtosave)
             writetoexcel(sheet_name="Sheet",row=newrow,col=5,value=link[i])
             writetoexcel(sheet_name="Sheet",row=newrow,col=6,value=image)
             count+=1
